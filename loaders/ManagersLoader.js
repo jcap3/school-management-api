@@ -12,13 +12,16 @@ const systemArch            = require('../static_arch/main.system');
 const TokenManager          = require('../managers/token/Token.manager');
 const SharkFin              = require('../managers/shark_fin/SharkFin.manager');
 const TimeMachine           = require('../managers/time_machine/TimeMachine.manager');
+const School                = require('../managers/school/School.manager');
+const Student               = require('../managers/student/Student.manager');
+const Classroom             = require('../managers/classroom/Classroom.manager');
 
 /** 
  * load sharable modules
  * @return modules tree with instance of each module
 */
 module.exports = class ManagersLoader {
-    constructor({ config, cortex, cache, oyster, aeon }) {
+    constructor({ config, cache, cortex }) {
 
         this.managers   = {};
         this.config     = config;
@@ -31,11 +34,8 @@ module.exports = class ManagersLoader {
             cache, 
             config,
             cortex,
-            oyster,
-            aeon,
             managers: this.managers, 
             validators: this.validators,
-            // mongomodels: this.mongomodels,
             resourceNodes: this.resourceNodes,
         };
         
@@ -66,6 +66,9 @@ module.exports = class ManagersLoader {
         this.managers.shark               = new SharkFin({ ...this.injectable, layers, actions });
         this.managers.timeMachine         = new TimeMachine(this.injectable);
         this.managers.token               = new TokenManager(this.injectable);
+        this.managers.school              = new School(this.injectable);
+        this.managers.student             = new Student(this.injectable);
+        this.managers.classroom           = new Classroom(this.injectable); 
         /*************************************************************************************************/
         this.managers.mwsExec             = new VirtualStack({ ...{ preStack: [/* '__token', */'__device',] }, ...this.injectable });
         this.managers.userApi             = new ApiHandler({...this.injectable,...{prop:'httpExposed'}});
