@@ -12,6 +12,7 @@ This is a School Management API built with Node.js, Express, and MongoDB. It pro
   - [Schools](#schools)
   - [Users](#users)
 - [DB Schema design](#db-schema-design)
+- [Deployment](#deployment)
 
 ## Installation
 
@@ -31,7 +32,7 @@ cd school-management-api
 npm install
 ```
 
-3. Populate .env file in the root directory
+3. Populate .env file in the root directory - make sure to change the MONGO and REDIS according to the instance (e.g. localhost)
 ```sh
 MONGO_URI=mongodb://mongoadmin:secret@localhost:27017/school-management
 USER_PORT=3000
@@ -419,3 +420,11 @@ const userSchema = new mongoose.Schema({
 - **User**: A user can have a role of either `superadmin` or `schooladmin`. If the role is `schooladmin`, the user is associated with a specific school through the `school` field, which references the `School` schema.
 
 
+
+## Deployment via Docker
+
+To deploy, simply utilize the already available docker files in the project: 
+
+```sh
+docker-compose up --build
+```

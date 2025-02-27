@@ -19,6 +19,10 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: 'school-management'
+      MONGO_INITDB_ROOT_USERNAME: 'mongoadmin'
+      MONGO_INITDB_ROOT_PASSWORD: 'secret'  
 
   redis:
     image: redis:latest
