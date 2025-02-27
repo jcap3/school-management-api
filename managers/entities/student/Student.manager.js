@@ -53,9 +53,9 @@ module.exports = class StudentManager {
         }
     }
 
-    async enrollStudent({ studentId, classroomId }) {
+    async enrollStudent({ id, classroomId }) {
         try {
-            const student = await Student.findById(studentId);
+            const student = await Student.findById(id);
             if (!student) {
                 throw new Error('Student not found');
             }
