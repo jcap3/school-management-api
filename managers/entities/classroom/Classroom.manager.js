@@ -18,10 +18,13 @@ module.exports = class ClassroomManager {
         }
     }
 
-    async getClassrooms() {
+    async getClassrooms({ school }) {
         try {
-            const classrooms = await Classroom.find();
-            return { success: true, classrooms };
+            const classrooms = await Classroom.findOne({ school: school });
+            if (!classrooms) {
+                throw new Error('Classrooms not found');
+            }
+            return { success: true, classrooms };       
         } catch (error) {
             return { success: false, error: error.message };
         }

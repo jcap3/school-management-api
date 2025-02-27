@@ -2,11 +2,15 @@ const http              = require('http');
 const express           = require('express');
 const cors              = require('cors');
 const app               = express();
+const initSuperAdmin = require('../../scripts/initSuperAdmin');
+
+initSuperAdmin();
 
 module.exports = class UserServer {
     constructor({config, managers}){
         this.config        = config;
         this.userApi       = managers.userApi;
+        this.managers      = managers;
     }
     
     /** for injecting middlewares */
@@ -28,7 +32,7 @@ module.exports = class UserServer {
         });
         
         /** a single middleware to handle all */
-        app.all('/api/:moduleName/:fnName', this.userApi.mw);
+        app.all('/api/:moduleName/:fnName', this.userApi.authenticate, this.userApi.authorize, this.userApi.mw);
 
         let server = http.createServer(app);
         server.listen(this.config.dotEnv.USER_PORT, () => {

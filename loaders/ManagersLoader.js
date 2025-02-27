@@ -12,9 +12,10 @@ const systemArch            = require('../static_arch/main.system');
 const TokenManager          = require('../managers/token/Token.manager');
 const SharkFin              = require('../managers/shark_fin/SharkFin.manager');
 const TimeMachine           = require('../managers/time_machine/TimeMachine.manager');
-const School                = require('../managers/school/School.manager');
-const Student               = require('../managers/student/Student.manager');
-const Classroom             = require('../managers/classroom/Classroom.manager');
+const School                = require('../managers/entities/school/School.manager');
+const Student               = require('../managers/entities/student/Student.manager');
+const Classroom             = require('../managers/entities/classroom/Classroom.manager');
+const User                  = require('../managers/entities/user/User.manager');
 
 /** 
  * load sharable modules
@@ -69,6 +70,7 @@ module.exports = class ManagersLoader {
         this.managers.school              = new School(this.injectable);
         this.managers.student             = new Student(this.injectable);
         this.managers.classroom           = new Classroom(this.injectable); 
+        this.managers.user                = new User(this.injectable);
         /*************************************************************************************************/
         this.managers.mwsExec             = new VirtualStack({ ...{ preStack: [/* '__token', */'__device',] }, ...this.injectable });
         this.managers.userApi             = new ApiHandler({...this.injectable,...{prop:'httpExposed'}});

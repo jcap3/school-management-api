@@ -1,4 +1,5 @@
 const getParamNames = require('./_common/getParamNames');
+const {authenticate, authorize} = require('../../middleware/auth');
 /** 
  * scans all managers for exposed methods 
  * and makes them available through a handler middleware
@@ -23,9 +24,11 @@ module.exports = class ApiHandler {
         this.methodMatrix  = {};
         this.auth          = {};
         this.fileUpload    = {};
-        this.mwsStack        = {};
+        this.mwsStack      = {};
         this.mw            = this.mw.bind(this);
-
+        this.authenticate  = this.authenticate.bind(this);
+        this.authorize     = this.authorize.bind(this);
+        
         /** filter only the modules that have interceptors */
         // console.log(`# Http API`);
         Object.keys(this.managers).forEach(mk=>{
@@ -119,6 +122,30 @@ module.exports = class ApiHandler {
     
         if(cb)cb(result);
         return result;
+    }
+ 
+    async authenticate(req, res, next){
+        let moduleName = req.params.moduleName;
+        let fnName = req.params.fnName;
+        
+        // no need to authenticate token of trying to log in
+        if (moduleName === 'user' && fnName === 'login') {
+            next();
+        } else {
+            authenticate(req, res, next);
+        }
+    }
+
+    async authorize(req, res, next){
+        let moduleName = req.params.moduleName;
+        let fnName = req.params.fnName;
+        
+        // no need to authenticate token of trying to log in
+        if (moduleName === 'user' && fnName === 'login') {
+            next();
+        } else {
+            authorize(req, res, next);
+        } 
     }
 
      /** a middle for executing admin apis trough HTTP */
