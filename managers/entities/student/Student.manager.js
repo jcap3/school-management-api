@@ -11,9 +11,9 @@ module.exports = class StudentManager {
             'post=createStudent', 
             'post=enrollStudent',
             'get=getStudent', 
-            'get=getStudents', 
-            'get=getStudentsBySchool',
-            'put=updateStudent', 
+            'get=getStudents',
+            'put=updateStudent',
+            'post=enrollStudent',
             'delete=deleteStudent'];
     }
 
@@ -27,18 +27,14 @@ module.exports = class StudentManager {
         }
     }
 
-    async getStudents() {
+    async getStudents(data) {
         try {
-            const students = await Student.find();
-            return { success: true, students };
-        } catch (error) {
-            return { success: false, error: error.message };
-        }
-    }
-
-    async getStudentsBySchool({ schoolId }) {
-        try {
-            const students = await Student.find({ school: schoolId });
+            let students;
+            if (data.req.user.role === 'superadmin') {
+                students = await Student.find();
+            } else {
+                students = await Student.find({ school: data.req.user.school });
+            }
             return { success: true, students };
         } catch (error) {
             return { success: false, error: error.message };

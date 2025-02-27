@@ -18,9 +18,15 @@ module.exports = class ClassroomManager {
         }
     }
 
-    async getClassrooms({ school }) {
+    async getClassrooms(data) {
         try {
-            const classrooms = await Classroom.findOne({ school: school });
+            let classrooms;
+            if (data.req.user.role === 'superadmin') {
+                classrooms = await Classroom.find();
+            } else {
+                console.log('data.req.user:', data.req.user);
+                classrooms = await Classroom.find({ school: data.req.user.school });
+            }
             if (!classrooms) {
                 throw new Error('Classrooms not found');
             }

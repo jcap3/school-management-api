@@ -25,10 +25,11 @@ const authenticate = (req, res, next) => {
 const authorize = async (req, res, next) => {
    
     try {
-        console.log('req.user:', req.user);
+        
         const user = await User.findById(req.user._id);
-        console.log('user:', user);
-
+        // re-assign user from jwt to db user
+        req.user = user;
+        console.log('user role:', user.role);
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
@@ -58,20 +59,32 @@ const authorize = async (req, res, next) => {
         };
 
         let fnName = req.params.fnName;
-        console.log('fnName:', fnName);
-        console.log('roles[fnName]:', roles[fnName]);
         
         if (!roles[fnName] || !roles[fnName].includes(user.role)) {
             return res.status(403).json({ message: 'Access denied.' });
         }
 
         if (user.role === 'schooladmin') {
-            console.log('user.school:', user.school._id);
-            console.log('req.body.school:', req.body.school);
-            console.log('isAllowed:', user.school._id.toString() === req.body.school.toString());
+             
+            if (req.body.school) {
+                if (user.school._id.toString() !== req.body.school.toString()) {
+                    return res.status(403).json({ message: 'Access denied. You can only access resources within your assigned school.' });
+                }
+            } else if (req.body.id) {
+                let entity = await Classroom.findById(req.body.id);
+                
+                // check if id is students
+                if (!entity) {
+                    entity = await Student.findById(req.body.id);
+                }
 
-            if (user.school._id.toString() !== req.body.school.toString()) {
-                return res.status(403).json({ message: 'Access denied. You can only access resources within your assigned school.' });
+                if (!entity) {
+                    return res.status(403).json({ message: 'Access denied.' });
+                }
+
+                if (entity.school.toString() !== user.school.toString()) {
+                    return res.status(403).json({ message: 'Access denied. You can only access resources within your assigned school.' });
+                }
             }
         }
 
