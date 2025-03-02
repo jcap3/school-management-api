@@ -274,7 +274,7 @@ Body:
 This will return the details of the school with the specified ID.
 
 3. Get Schools
-- `GET /api/schools/getSchools`
+- `GET /api/school/getSchools`
 - Request:
 ```sh
 Header: 'Authorization: Bearer <token from login>'
